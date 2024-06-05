@@ -18,7 +18,7 @@ function MainComponent() {
 
   const fetchReservations = async () => {
     try {
-      const response = await fetch("http://localhost:5000/");
+      const response = await fetch("https://wanglab-1.onrender.com/");
       if (response.ok) {
         const data = await response.json();
         setReservations(data);
@@ -53,7 +53,7 @@ function MainComponent() {
       };
 
       try {
-        const response = await fetch("http://localhost:5000/", {
+        const response = await fetch("https://wanglab-1.onrender.com/", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
