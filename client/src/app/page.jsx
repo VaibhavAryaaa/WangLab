@@ -8,6 +8,8 @@ function MainComponent() {
     date: "",
     startTime: "",
     endTime: "",
+    startTime: "",
+    endTime: "",
     multipleEquipments: [],
     otherEquipment: "",
   });
@@ -21,6 +23,7 @@ const port = "https://wanglab-1.onrender.com/"
 
   const fetchReservations = async () => {
     try {
+      const response = await fetch(port);
       const response = await fetch(port);
       if (response.ok) {
         const data = await response.json();
@@ -53,8 +56,25 @@ const port = "https://wanglab-1.onrender.com/"
     });
   };
 
+  const checkOverlap = () => {
+    const newStartTime = new Date(`${form.date}T${form.startTime}`);
+    const newEndTime = new Date(`${form.date}T${form.endTime}`);
+    return reservations.some((reservation) => {
+      if (form.date !== reservation.date) return false;
+      if (!form.multipleEquipments.some((equip) => reservation.equipment.includes(equip))) return false;
+      const existingStartTime = new Date(`${reservation.date}T${reservation.startTime}`);
+      const existingEndTime = new Date(`${reservation.date}T${reservation.endTime}`);
+      return newStartTime < existingEndTime && newEndTime > existingStartTime;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.name && form.date && form.startTime && form.endTime && form.multipleEquipments.length) {
+      if (checkOverlap()) {
+        setError("The selected equipment is already reserved for the specified time period.");
+        return;
+      }
     if (form.name && form.date && form.startTime && form.endTime && form.multipleEquipments.length) {
       if (checkOverlap()) {
         setError("The selected equipment is already reserved for the specified time period.");
@@ -69,10 +89,13 @@ const port = "https://wanglab-1.onrender.com/"
         date: form.date,
         startTime: form.startTime,
         endTime: form.endTime,
+        startTime: form.startTime,
+        endTime: form.endTime,
         equipment: equipmentDetail,
       };
 
       try {
+        const response = await fetch(port, {
         const response = await fetch(port, {
           method: "POST",
           headers: {
@@ -91,9 +114,12 @@ const port = "https://wanglab-1.onrender.com/"
             date: "",
             startTime: "",
             endTime: "",
+            startTime: "",
+            endTime: "",
             multipleEquipments: [],
             otherEquipment: "",
           });
+          setError(""); // Clear any previous errors
           setError(""); // Clear any previous errors
         } else {
           console.error("Failed to save reservation");
@@ -182,10 +208,23 @@ const port = "https://wanglab-1.onrender.com/"
           </div>
           <div>
             <label className="block font-roboto">End Time</label>
+            <label className="block font-roboto">Start Time</label>
+            <input
+              type="time"
+              name="startTime"
+              className="w-full p-2 border rounded"
+              value={form.startTime}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label className="block font-roboto">End Time</label>
             <input
               type="time"
               name="endTime"
+              name="endTime"
               className="w-full p-2 border rounded"
+              value={form.endTime}
               value={form.endTime}
               onChange={handleInputChange}
             />
@@ -232,6 +271,11 @@ const port = "https://wanglab-1.onrender.com/"
             Submit
           </button>
         </form>
+        {error && (
+          <div className="mt-4 text-red-600 font-roboto">
+            {error}
+          </div>
+        )}
         {error && (
           <div className="mt-4 text-red-600 font-roboto">
             {error}
