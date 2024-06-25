@@ -6,11 +6,14 @@ function MainComponent() {
   const [form, setForm] = React.useState({
     name: "",
     date: "",
-    time: "",
+    startTime: "",
+    endTime: "",
     multipleEquipments: [],
     otherEquipment: "",
   });
-
+  const [error, setError] = React.useState("");
+  //const port = "http://localhost:5000";
+const port = "https://wanglab-1.onrender.com/"
   React.useEffect(() => {
     // Fetch reservations when component mounts
     fetchReservations();
@@ -18,7 +21,7 @@ function MainComponent() {
 
   const fetchReservations = async () => {
     try {
-      const response = await fetch("https://wanglab-1.onrender.com/");
+      const response = await fetch(port);
       if (response.ok) {
         const data = await response.json();
         setReservations(data);
@@ -38,9 +41,25 @@ function MainComponent() {
     setForm({ ...form, multipleEquipments: value });
   };
 
+  const checkOverlap = () => {
+    const newStartTime = new Date(`${form.date}T${form.startTime}`);
+    const newEndTime = new Date(`${form.date}T${form.endTime}`);
+    return reservations.some((reservation) => {
+      if (form.date !== reservation.date) return false;
+      if (!form.multipleEquipments.some((equip) => reservation.equipment.includes(equip))) return false;
+      const existingStartTime = new Date(`${reservation.date}T${reservation.startTime}`);
+      const existingEndTime = new Date(`${reservation.date}T${reservation.endTime}`);
+      return newStartTime < existingEndTime && newEndTime > existingStartTime;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.name && form.date && form.time && form.multipleEquipments.length) {
+    if (form.name && form.date && form.startTime && form.endTime && form.multipleEquipments.length) {
+      if (checkOverlap()) {
+        setError("The selected equipment is already reserved for the specified time period.");
+        return;
+      }
       const equipmentDetail = form.multipleEquipments.includes("Others")
         ? form.otherEquipment
         : form.multipleEquipments.join(", ");
@@ -48,12 +67,13 @@ function MainComponent() {
       const newReservation = {
         name: form.name,
         date: form.date,
-        time: form.time,
+        startTime: form.startTime,
+        endTime: form.endTime,
         equipment: equipmentDetail,
       };
 
       try {
-        const response = await fetch("https://wanglab-1.onrender.com/", {
+        const response = await fetch(port, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -69,10 +89,12 @@ function MainComponent() {
           setForm({
             name: "",
             date: "",
-            time: "",
+            startTime: "",
+            endTime: "",
             multipleEquipments: [],
             otherEquipment: "",
           });
+          setError(""); // Clear any previous errors
         } else {
           console.error("Failed to save reservation");
         }
@@ -149,12 +171,22 @@ function MainComponent() {
             />
           </div>
           <div>
-            <label className="block font-roboto">Pick a Time</label>
+            <label className="block font-roboto">Start Time</label>
             <input
               type="time"
-              name="time"
+              name="startTime"
               className="w-full p-2 border rounded"
-              value={form.time}
+              value={form.startTime}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div>
+            <label className="block font-roboto">End Time</label>
+            <input
+              type="time"
+              name="endTime"
+              className="w-full p-2 border rounded"
+              value={form.endTime}
               onChange={handleInputChange}
             />
           </div>
@@ -200,7 +232,11 @@ function MainComponent() {
             Submit
           </button>
         </form>
-
+        {error && (
+          <div className="mt-4 text-red-600 font-roboto">
+            {error}
+          </div>
+        )}
         <div className="mt-6">
           <h3 className="text-xl font-semibold font-roboto mb-4">
             Reserved Slots
@@ -210,9 +246,12 @@ function MainComponent() {
               <p className="font-roboto">No slots reserved yet.</p>
             ) : (
               reservations.map((res, index) => (
-                <p key={index} className="font-roboto">
-                  {res.name} reserved {res.equipment} on {res.date} at {res.time}
-                </p>
+                <div key={index} className="mb-4">
+  <p className="font-roboto">
+    <strong>{res.name}</strong> reserved {res.equipment} on <strong>{res.date}</strong> from {res.startTime} to {res.endTime}
+  </p>
+  <hr className="mt-2" />
+</div>
               ))
             )}
           </div>
