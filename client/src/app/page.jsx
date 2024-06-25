@@ -8,13 +8,11 @@ function MainComponent() {
     date: "",
     startTime: "",
     endTime: "",
-    startTime: "",
-    endTime: "",
     multipleEquipments: [],
     otherEquipment: "",
   });
   const [error, setError] = React.useState("");
-  //////const port = "http://localhost:5000";
+  
 const port = "https://wanglab-1.onrender.com/"
   React.useEffect(() => {
     // Fetch reservations when component mounts
@@ -24,7 +22,6 @@ const port = "https://wanglab-1.onrender.com/"
   const fetchReservations = async () => {
     try {
       const response = await fetch(port);
-      
       if (response.ok) {
         const data = await response.json();
         setReservations(data);
@@ -43,8 +40,6 @@ const port = "https://wanglab-1.onrender.com/"
     const value = Array.from(e.target.selectedOptions, (option) => option.value);
     setForm({ ...form, multipleEquipments: value });
   };
-
-  
 
   const checkOverlap = () => {
     const newStartTime = new Date(`${form.date}T${form.startTime}`);
@@ -65,11 +60,6 @@ const port = "https://wanglab-1.onrender.com/"
         setError("The selected equipment is already reserved for the specified time period.");
         return;
       }
-    if (form.name && form.date && form.startTime && form.endTime && form.multipleEquipments.length) {
-      if (checkOverlap()) {
-        setError("The selected equipment is already reserved for the specified time period.");
-        return;
-      }
       const equipmentDetail = form.multipleEquipments.includes("Others")
         ? form.otherEquipment
         : form.multipleEquipments.join(", ");
@@ -79,14 +69,11 @@ const port = "https://wanglab-1.onrender.com/"
         date: form.date,
         startTime: form.startTime,
         endTime: form.endTime,
-        startTime: form.startTime,
-        endTime: form.endTime,
         equipment: equipmentDetail,
       };
 
       try {
         const response = await fetch(port, {
-        
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -104,12 +91,9 @@ const port = "https://wanglab-1.onrender.com/"
             date: "",
             startTime: "",
             endTime: "",
-            startTime: "",
-            endTime: "",
             multipleEquipments: [],
             otherEquipment: "",
           });
-          setError(""); // Clear any previous errors
           setError(""); // Clear any previous errors
         } else {
           console.error("Failed to save reservation");
@@ -187,21 +171,10 @@ const port = "https://wanglab-1.onrender.com/"
             />
           </div>
           <div>
-            <label className="block font-roboto">Start Time</label>
+            <label className="block font-roboto">Pick a Time</label>
             <input
               type="time"
-              name="startTime"
-              className="w-full p-2 border rounded"
-              value={form.startTime}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label className="block font-roboto">End Time</label>
-            <label className="block font-roboto">Start Time</label>
-            <input
-              type="time"
-              name="startTime"
+              name="time"
               className="w-full p-2 border rounded"
               value={form.startTime}
               onChange={handleInputChange}
@@ -212,10 +185,8 @@ const port = "https://wanglab-1.onrender.com/"
             <input
               type="time"
               name="endTime"
-            
               className="w-full p-2 border rounded"
               value={form.endTime}
-              
               onChange={handleInputChange}
             />
           </div>
@@ -266,11 +237,6 @@ const port = "https://wanglab-1.onrender.com/"
             {error}
           </div>
         )}
-        {error && (
-          <div className="mt-4 text-red-600 font-roboto">
-            {error}
-          </div>
-        )}
         <div className="mt-6">
           <h3 className="text-xl font-semibold font-roboto mb-4">
             Reserved Slots
@@ -281,11 +247,11 @@ const port = "https://wanglab-1.onrender.com/"
             ) : (
               reservations.map((res, index) => (
                 <div key={index} className="mb-4">
-  <p className="font-roboto">
-    <strong>{res.name}</strong> reserved {res.equipment} on <strong>{res.date}</strong> from {res.startTime} to {res.endTime}
-  </p>
-  <hr className="mt-2" />
-</div>
+                  <p className="font-roboto">
+                    {res.name} reserved {res.equipment} on {res.date} from {res.startTime} to {res.endTime}
+                  </p>
+                  <hr className="mt-2" />
+                </div>
               ))
             )}
           </div>
