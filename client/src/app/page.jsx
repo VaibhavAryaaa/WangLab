@@ -14,7 +14,7 @@ function MainComponent() {
     otherEquipment: "",
   });
   const [error, setError] = React.useState("");
-  //const port = "http://localhost:5000";
+  //////const port = "http://localhost:5000";
 const port = "https://wanglab-1.onrender.com/"
   React.useEffect(() => {
     // Fetch reservations when component mounts
@@ -24,7 +24,7 @@ const port = "https://wanglab-1.onrender.com/"
   const fetchReservations = async () => {
     try {
       const response = await fetch(port);
-      const response = await fetch(port);
+      
       if (response.ok) {
         const data = await response.json();
         setReservations(data);
@@ -44,17 +44,7 @@ const port = "https://wanglab-1.onrender.com/"
     setForm({ ...form, multipleEquipments: value });
   };
 
-  const checkOverlap = () => {
-    const newStartTime = new Date(`${form.date}T${form.startTime}`);
-    const newEndTime = new Date(`${form.date}T${form.endTime}`);
-    return reservations.some((reservation) => {
-      if (form.date !== reservation.date) return false;
-      if (!form.multipleEquipments.some((equip) => reservation.equipment.includes(equip))) return false;
-      const existingStartTime = new Date(`${reservation.date}T${reservation.startTime}`);
-      const existingEndTime = new Date(`${reservation.date}T${reservation.endTime}`);
-      return newStartTime < existingEndTime && newEndTime > existingStartTime;
-    });
-  };
+  
 
   const checkOverlap = () => {
     const newStartTime = new Date(`${form.date}T${form.startTime}`);
@@ -96,7 +86,7 @@ const port = "https://wanglab-1.onrender.com/"
 
       try {
         const response = await fetch(port, {
-        const response = await fetch(port, {
+        
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -222,10 +212,10 @@ const port = "https://wanglab-1.onrender.com/"
             <input
               type="time"
               name="endTime"
-              name="endTime"
+            
               className="w-full p-2 border rounded"
               value={form.endTime}
-              value={form.endTime}
+              
               onChange={handleInputChange}
             />
           </div>
@@ -304,5 +294,5 @@ const port = "https://wanglab-1.onrender.com/"
     </div>
   );
 }
-
+}
 export default MainComponent;
