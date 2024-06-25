@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const historySchema = new mongoose.Schema({
   name: {
     type: String,
@@ -8,15 +9,19 @@ const historySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  time: {
-    type: String,
+  startTime: {
+    type: String, // Change to Date if you prefer to store as Date type
+    required: true,
+  },
+  endTime: {
+    type: String, // Change to Date if you prefer to store as Date type
     required: true,
   },
   equipment: {
     type: String,
     required: true,
   }
-  
 });
-const History = mongoose.model("history", historySchema);
+
+const History = mongoose.model("History", historySchema);
 module.exports = History;
