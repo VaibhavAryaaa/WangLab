@@ -248,7 +248,7 @@ const port = "https://wanglab-1.onrender.com/"
               reservations.map((res, index) => (
                 <div key={index} className="mb-4">
                   <p className="font-roboto">
-                    {res.name} reserved {res.equipment} on {res.date} from {res.startTime} to {res.endTime}
+                   <strong>{res.name}</strong>  reserved {res.equipment} on <strong>{res.date}</strong>  from {res.startTime} to {res.endTime}
                   </p>
                   <hr className="mt-2" />
                 </div>
