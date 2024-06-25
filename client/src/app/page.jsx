@@ -221,5 +221,5 @@ function MainComponent() {
     </div>
   );
 }
-}
+
 export default MainComponent;
