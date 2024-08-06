@@ -36,7 +36,8 @@ const port = "https://wanglab-1.onrender.com/"
   const handleInputChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleMultipleEquipmentsChange = (e) => {
+  const handleMultipleEquipmentsChange = (e) => 
+    {
     const value = Array.from(e.target.selectedOptions, (option) => option.value);
     setForm({ ...form, multipleEquipments: value });
   };
@@ -232,7 +233,8 @@ const port = "https://wanglab-1.onrender.com/"
             Submit
           </button>
         </form>
-        {error && (
+        {error &&
+        (
           <div className="mt-4 text-red-600 font-roboto">
             {error}
           </div>
@@ -245,7 +247,8 @@ const port = "https://wanglab-1.onrender.com/"
             {reservations.length === 0 ? (
               <p className="font-roboto">No slots reserved yet.</p>
             ) : (
-              reservations.map((res, index) => (
+              reservations.map((res, index) => 
+                (
                 <div key={index} className="mb-4">
                   <p className="font-roboto">
                    <strong>{res.name}</strong>  reserved {res.equipment} on <strong>{res.date}</strong>  from {res.startTime} to {res.endTime}
